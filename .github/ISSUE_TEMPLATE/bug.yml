@@ -21,6 +21,11 @@ body:
         - label: "I have checked 'open' AND 'closed' issues and this is not a duplicate."
           required: true
 
+  - type: markdown
+    attributes:
+      value: |
+        ## Bug Details
+
   - type: textarea
     id: what-happened
     attributes:
@@ -55,6 +60,11 @@ body:
       description: If applicable, add screenshots to help explain your problem.
     validations:
       required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Diagnostic Information
 
   - type: dropdown
     id: os
