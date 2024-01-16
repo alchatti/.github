@@ -1,0 +1,100 @@
+name: Bug Report
+description: Create a report to help us improve
+title: "[BUG] "
+labels: [bug]
+assignees: ""
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for taking the time to fill out this bug report!"
+
+  - type: checkboxes
+    id: issue-check
+    attributes:
+      label: Preliminary Checks
+      description: Please confirm the following items before submitting your bug report.
+      options:
+        - label: I have searched the existing issues for similar bug reports and found none.
+          required: true
+        - label: I have checked "open" AND "closed" issues and this is not a duplicate
+          required: true
+
+  - type: input
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear and concise description of what the bug is.
+      placeholder: "Explain what happened..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: '1. Go to...\n2. Click on...\n3. Scroll down to...\n4. See error'
+    validations:
+      required: true
+
+  - type: input
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: "Explain what you expected to happen..."
+    validations:
+      required: true
+
+  - type: input
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      description: Please select your operating system.
+      options:
+        - Windows
+        - MacOS
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: Please select your browser.
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Other
+    validations:
+      required: false
+
+  - type: input
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+      placeholder: "Any other information..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Terms and conditions
+      description: Please agree to our terms and conditions.
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
