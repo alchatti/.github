@@ -24,7 +24,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Bug Details
+        ## Details
 
   - type: textarea
     id: what-happened
