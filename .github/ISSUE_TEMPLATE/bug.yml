@@ -20,7 +20,7 @@ body:
         - label: "I have checked 'open' AND 'closed' issues and this is not a duplicate."
           required: true
 
-  - type: input
+  - type: textarea
     id: what-happened
     attributes:
       label: What happened?
@@ -38,7 +38,7 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: textarea
     id: expected-behavior
     attributes:
       label: Expected behavior
@@ -47,7 +47,7 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: textarea
     id: screenshots
     attributes:
       label: Screenshots
