@@ -1,7 +1,7 @@
-name: Bug Report
+name: 🐛 Bug Report
 description: Create a report to help us improve
-title: "[BUG] "
-labels: [bug]
+title: "🐛[BUG]: "
+labels: [bug, new]
 assignees:
   - alchatti
 body:
