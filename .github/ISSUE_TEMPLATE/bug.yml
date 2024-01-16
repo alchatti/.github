@@ -84,7 +84,7 @@ body:
     validations:
       required: false
 
-  - type: input
+  - type: textarea
     id: additional-context
     attributes:
       label: Additional context
