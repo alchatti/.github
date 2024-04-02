@@ -1,0 +1,52 @@
+name: 🚀 Feature Request
+description: Suggest an idea or possible new feature for this project.
+title: "🚀:"
+labels: [feature, new]
+assignees:
+  - alchatti
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for taking the time to suggest an improvement!**
+
+  - type: checkboxes
+    id: issue-check
+    attributes:
+      label: Preliminary Checks
+      description: Please confirm the following items before submitting your bug report.
+      options:
+        - label: "Is your feature request related to a problem?"
+          required: true
+        - label: "I have checked 'open' AND 'closed' and this is not a duplicate."
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Details
+
+  - type: textarea
+    id: request
+    attributes:
+      label: Describe the solution you'd like
+      description: A clear and concise description of what you want to happen
+      placeholder: "I would like to add..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: If you have found a temporary fix, list it here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots about the feature request.
+    validations:
+      required: false
