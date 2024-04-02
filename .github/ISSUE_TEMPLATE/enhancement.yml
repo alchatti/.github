@@ -1,0 +1,57 @@
+name: ⚡ Enhancement Request
+description: Suggest an enhancement for this project. Improve an existing feature.
+title: "⚡ :"
+labels: [Enhancement, new]
+assignees:
+  - alchatti
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for taking the time to suggest an improvement!**
+
+  - type: checkboxes
+    id: issue-check
+    attributes:
+      label: Preliminary Checks
+      description: Please confirm the following items before submitting your bug report.
+      options:
+        - label: "Is your request related to a problem?"
+          required: true
+        - label: "I have checked 'open' AND 'closed' and this is not a duplicate."
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Details
+
+  - type: textarea
+    id: request
+    attributes:
+      label: Is your enhancement request related to a problem? Please describe.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the solution you'd like
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Describe alternatives you've considered
+      description: If you have found a temporary fix, list it here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots about this request.
+    validations:
+      required: false
