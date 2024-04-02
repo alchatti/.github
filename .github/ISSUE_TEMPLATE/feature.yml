@@ -16,8 +16,6 @@ body:
       label: Preliminary Checks
       description: Please confirm the following items before submitting your bug report.
       options:
-        - label: "Is your feature request related to a problem?"
-          required: true
         - label: "I have checked 'open' AND 'closed' and this is not a duplicate."
           required: true
 
