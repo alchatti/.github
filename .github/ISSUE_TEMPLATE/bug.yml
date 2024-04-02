@@ -53,14 +53,6 @@ body:
     validations:
       required: true
 
-  - type: textarea
-    id: screenshots
-    attributes:
-      label: Screenshots
-      description: If applicable, add screenshots to help explain your problem.
-    validations:
-      required: false
-
   - type: markdown
     attributes:
       value: |
