@@ -1,0 +1,57 @@
+name: 📚 Documentation Issue Report
+description: Report an issue in the project's documentation or README.md file.
+title: "📚:"
+labels: [Documentation, new]
+assignees:
+  - alchatti
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for taking the time to suggest an improvement!**
+
+  - type: checkboxes
+    id: issue-check
+    attributes:
+      label: Preliminary Checks
+      description: Please confirm the following items before submitting your report.
+      options:
+        - label: "I have checked 'open' AND 'closed' and this is not a duplicate."
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Details
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Describe the issue/bug
+      placeholder: "Explain what it is..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: '1. Go to...\n2. Click on...\n3. Scroll down to...\n4. See error'
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots about this request.
+    validations:
+      required: false
