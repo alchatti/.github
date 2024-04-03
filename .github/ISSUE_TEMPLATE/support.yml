@@ -1,0 +1,64 @@
+name: 🛟 Support Request
+description: Ask a question or request support, documentation, tutorial.
+title: "🛟:"
+labels: [support, new]
+assignees:
+  - alchatti
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for taking the time to fill out this bug report!**
+
+  - type: checkboxes
+    id: issue-check
+    attributes:
+      label: Preliminary Checks
+      description: Please confirm the following items before submitting your bug report.
+      options:
+        - label: I have searched the existing issues, documentation and tutorials.
+          required: true
+        - label: "I have checked 'open' AND 'closed' issues and this is not a duplicate."
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Details
+        - If you request a clarification, please description your **Question**.
+        - If you need help with a feature or product usage support, please provide a description of the **Support Needed**.
+        - If you need a new documentation or an update to the existing documentation, please provide a description of the **Documentation Request**.
+        - If you need a new tutorial or an update to the existing tutorial, please provide a description of the **Tutorial Request**.
+
+        | You can use the Justification or any additional information field to provide more context or justification for your request.
+
+        Please keep it short, and use lists or bullet points where possible.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Request Type
+      description: Please select your request type.
+      multiple: false
+      options:
+        - Question
+        - Support Needed
+        - Documentation Request
+        - tutorial Request
+    validations:
+      required: false
+
+  - type: textarea
+    id: request
+    attributes:
+      label: Describe you request
+      description: A clear and concise description of what is needed
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Justification or any additional information (Optional)
+    validations:
+      required: false
