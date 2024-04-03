@@ -1,6 +1,6 @@
 name: 📚 Documentation Issue Report
 description: Report an issue in the project's documentation or README.md file.
-title: "📚:"
+title: "📚: [TITLE]"
 labels: [Documentation, new]
 assignees:
   - alchatti

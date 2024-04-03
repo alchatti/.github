@@ -1,6 +1,6 @@
 name: 🛟 Support Request
 description: Ask a question or request support, documentation, tutorial.
-title: "🛟:"
+title: "🛟: [Request Type] for [TITLE]"
 labels: [support, new]
 assignees:
   - alchatti

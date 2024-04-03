@@ -1,6 +1,6 @@
 name: 🐛 Bug Report
 description: Report a software bug or unexpected behavior.
-title: "🐛:"
+title: "🐛: [TITLE]"
 labels: [bug, new]
 assignees:
   - alchatti
