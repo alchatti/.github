@@ -44,7 +44,7 @@ body:
         - Question
         - Support Needed
         - Documentation Request
-        - tutorial Request
+        - Tutorial Request
     validations:
       required: false
 
