@@ -1,0 +1,201 @@
+name: Generate Container Image Tags
+
+on:
+  workflow_call:
+    outputs:
+      tags:
+        description: "Generated image tags, one per line"
+        value: ${{ jobs.generate.outputs.tags }}
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    outputs:
+      tags: ${{ steps.tags.outputs.tags }}
+
+    steps:
+      - name: Generate image tags
+        id: tags
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          set -euo pipefail
+
+          TIMESTAMP="$(TZ='Asia/Dubai' date +'%Y%m%d_%H%M')"
+
+          echo "Debug:"
+          echo "EVENT_NAME=${EVENT_NAME}"
+          echo "REF_NAME=${REF_NAME}"
+          echo "RELEASE_TAG=${RELEASE_TAG:-not provided}"
+          echo "IS_PRERELEASE=${IS_PRERELEASE:-not provided}"
+          echo ""
+
+          TAGS=()
+          TAGGING_MODE=""
+
+          add_tag() {
+            local tag="$1"
+
+            if [ -z "$tag" ]; then
+              return
+            fi
+
+            TAGS+=("$tag")
+          }
+
+          normalize_branch_token() {
+            local branch="$1"
+            local last_token="${branch##*/}"
+
+            echo "$last_token" \
+              | tr '[:upper:]' '[:lower:]' \
+              | sed 's/[^a-z0-9_.-]/-/g' \
+              | sed 's/^-*//;s/-*$//' \
+              | cut -c1-120
+          }
+
+          if [ "$EVENT_NAME" = "release" ]; then
+            if [ -z "$RELEASE_TAG" ]; then
+              echo "Release event detected, but release tag is empty."
+              exit 1
+            fi
+
+            if [ "$IS_PRERELEASE" = "true" ]; then
+              TAGGING_MODE="Pre-release"
+
+              add_tag "rc"
+              add_tag "rc-${TIMESTAMP}"
+              add_tag "rc-${RELEASE_TAG}"
+
+            else
+              TAGGING_MODE="Production release"
+
+              add_tag "latest"
+              add_tag "$RELEASE_TAG"
+            fi
+
+          elif [ "$REF_NAME" = "main" ] || [ "$REF_NAME" = "master" ]; then
+            TAGGING_MODE="Main branch release candidate"
+
+            add_tag "rc"
+            add_tag "rc-${TIMESTAMP}"
+
+          else
+            TAGGING_MODE="Branch build"
+
+            SAFE_BRANCH="$(normalize_branch_token "$REF_NAME")"
+
+            if [ -z "$SAFE_BRANCH" ]; then
+              echo "Unable to generate a safe branch tag from ref: $REF_NAME"
+              exit 1
+            fi
+
+            add_tag "${SAFE_BRANCH}-latest"
+            add_tag "${SAFE_BRANCH}-${TIMESTAMP}"
+          fi
+
+          printf "%s\n" "${TAGS[@]}" \
+            | sed '/^$/d' \
+            | sort -u \
+            > tags.txt
+
+          if [ ! -s tags.txt ]; then
+            echo "No image tags were generated."
+            exit 1
+          fi
+
+          {
+            echo "tags<<EOF"
+            cat tags.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo "timestamp=${TIMESTAMP}"
+            echo "mode=${TAGGING_MODE}"
+          } >> "$GITHUB_OUTPUT"
+
+          echo ""
+          echo "Generated tags:"
+          cat tags.txt
+
+      - name: Generate GitHub Actions Summary
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
+          GENERATED_TAGS: ${{ steps.tags.outputs.tags }}
+          TAGGING_MODE: ${{ steps.tags.outputs.mode }}
+          TIMESTAMP: ${{ steps.tags.outputs.timestamp }}
+        run: |
+          set -euo pipefail
+
+          {
+            echo "# 🏷️ Image Tag Generation Summary"
+            echo ""
+
+            echo "## ✅ Generated Tags"
+            echo ""
+            echo '```text'
+            echo "$GENERATED_TAGS"
+            echo '```'
+
+            echo ""
+            echo "## 🐞 Debug"
+            echo ""
+            echo "| Item | Value |"
+            echo "|---|---|"
+            echo "| IS_PRERELEASE | \`${IS_PRERELEASE:-not provided}\` |"
+            echo "| RELEASE_TAG | \`${RELEASE_TAG:-not provided}\` |"
+
+            echo ""
+            echo "## 📌 Context"
+            echo ""
+            echo "| Item | Value |"
+            echo "|---|---|"
+            echo "| Tagging Mode | \`${TAGGING_MODE}\` |"
+            echo "| Event | \`${EVENT_NAME}\` |"
+            echo "| Ref Name | \`${REF_NAME}\` |"
+            echo "| Repository | \`${{ github.repository }}\` |"
+            echo "| Commit SHA | \`${{ github.sha }}\` |"
+            echo "| Actor | \`${{ github.actor }}\` |"
+            echo "| Timestamp | \`${TIMESTAMP}\` |"
+            echo "| Timestamp TZ | \`Asia/Dubai / GMT+4\` |"
+
+            if [ "$EVENT_NAME" = "release" ]; then
+              echo "| Release Tag | \`${RELEASE_TAG}\` |"
+              echo "| Pre-release | \`${IS_PRERELEASE}\` |"
+            fi
+
+            echo ""
+            echo "## ⚙️ Tagging Logic"
+            echo ""
+
+            case "$TAGGING_MODE" in
+              "Pre-release")
+                echo "🟡 **Pre-release detected** — generated \`rc\`, \`rc-${TIMESTAMP}\`, and \`rc-${RELEASE_TAG}\`."
+                ;;
+              "Production release")
+                echo "🟢 **Production release detected** — generated \`latest\` and the release tag."
+                ;;
+              "Main branch release candidate")
+                echo "🔵 **Main/master branch build** — generated \`rc\` and \`rc-${TIMESTAMP}\`."
+                ;;
+              "Branch build")
+                echo "🧪 **Branch build** — generated branch-scoped tags using the last branch token."
+                ;;
+              *)
+                echo "ℹ️ Tagging mode was not classified."
+                ;;
+            esac
+          } >> "$GITHUB_STEP_SUMMARY"
