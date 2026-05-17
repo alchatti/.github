@@ -1,4 +1,4 @@
-name: Generate Container Image Tags
+name: Generate Image Tags
 
 on:
   workflow_call:
@@ -62,24 +62,51 @@ jobs:
               | cut -c1-120
           }
 
+          normalize_release_tag() {
+            local tag="$1"
+
+            # Remove leading v or V only when followed by a number.
+            echo "$tag" | sed -E 's/^[vV]([0-9])/\1/'
+          }
+
+          add_semver_tags() {
+            local version="$1"
+
+            if [[ "$version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+              local major="${BASH_REMATCH[1]}"
+              local minor="${BASH_REMATCH[2]}"
+              local patch="${BASH_REMATCH[3]}"
+
+              add_tag "${major}.${minor}.${patch}"
+              add_tag "${major}.${minor}"
+              add_tag "${major}"
+            else
+              echo "Release tag '${version}' is not in MAJOR.MINOR.PATCH format after removing leading v."
+              echo "Adding only the normalized release tag."
+              add_tag "$version"
+            fi
+          }
+
           if [ "$EVENT_NAME" = "release" ]; then
             if [ -z "$RELEASE_TAG" ]; then
               echo "Release event detected, but release tag is empty."
               exit 1
             fi
 
+            NORMALIZED_RELEASE_TAG="$(normalize_release_tag "$RELEASE_TAG")"
+
             if [ "$IS_PRERELEASE" = "true" ]; then
               TAGGING_MODE="Pre-release"
 
               add_tag "rc"
               add_tag "rc-${TIMESTAMP}"
-              add_tag "rc-${RELEASE_TAG}"
+              add_tag "rc-${NORMALIZED_RELEASE_TAG}"
 
             else
               TAGGING_MODE="Production release"
 
               add_tag "latest"
-              add_tag "$RELEASE_TAG"
+              add_semver_tags "$NORMALIZED_RELEASE_TAG"
             fi
 
           elif [ "$REF_NAME" = "main" ] || [ "$REF_NAME" = "master" ]; then
@@ -121,6 +148,7 @@ jobs:
           {
             echo "timestamp=${TIMESTAMP}"
             echo "mode=${TAGGING_MODE}"
+            echo "normalized_release_tag=${NORMALIZED_RELEASE_TAG:-}"
           } >> "$GITHUB_OUTPUT"
 
           echo ""
@@ -137,6 +165,7 @@ jobs:
           GENERATED_TAGS: ${{ steps.tags.outputs.tags }}
           TAGGING_MODE: ${{ steps.tags.outputs.mode }}
           TIMESTAMP: ${{ steps.tags.outputs.timestamp }}
+          NORMALIZED_RELEASE_TAG: ${{ steps.tags.outputs.normalized_release_tag }}
         run: |
           set -euo pipefail
 
@@ -157,6 +186,7 @@ jobs:
             echo "|---|---|"
             echo "| IS_PRERELEASE | \`${IS_PRERELEASE:-not provided}\` |"
             echo "| RELEASE_TAG | \`${RELEASE_TAG:-not provided}\` |"
+            echo "| NORMALIZED_RELEASE_TAG | \`${NORMALIZED_RELEASE_TAG:-not applicable}\` |"
 
             echo ""
             echo "## 📌 Context"
@@ -174,6 +204,7 @@ jobs:
 
             if [ "$EVENT_NAME" = "release" ]; then
               echo "| Release Tag | \`${RELEASE_TAG}\` |"
+              echo "| Normalized Release Tag | \`${NORMALIZED_RELEASE_TAG}\` |"
               echo "| Pre-release | \`${IS_PRERELEASE}\` |"
             fi
 
@@ -183,10 +214,10 @@ jobs:
 
             case "$TAGGING_MODE" in
               "Pre-release")
-                echo "🟡 **Pre-release detected** — generated \`rc\`, \`rc-${TIMESTAMP}\`, and \`rc-${RELEASE_TAG}\`."
+                echo "🟡 **Pre-release detected** — removed leading \`v\` from the release tag and generated \`rc\`, \`rc-${TIMESTAMP}\`, and \`rc-${NORMALIZED_RELEASE_TAG}\`."
                 ;;
               "Production release")
-                echo "🟢 **Production release detected** — generated \`latest\` and the release tag."
+                echo "🟢 **Production release detected** — removed leading \`v\` and generated \`latest\`, full version, minor version, and major version tags."
                 ;;
               "Main branch release candidate")
                 echo "🔵 **Main/master branch build** — generated \`rc\` and \`rc-${TIMESTAMP}\`."
