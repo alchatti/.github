@@ -32,6 +32,10 @@ name: Reusable Docker Build And Push
         required: false
         type: string
         default: type=gha,mode=max
+      target:
+        required: false
+        type: string
+        default: ""
     secrets:
       DOCKERHUB_USERNAME:
         required: true
@@ -69,3 +73,4 @@ jobs:
           cache-from: ${{ inputs.cache_from }}
           cache-to: ${{ inputs.cache_to }}
           tags: ${{ inputs.tags }}
+          target: ${{ inputs.target }}
