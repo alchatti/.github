@@ -125,6 +125,7 @@ jobs:
               exit 1
             fi
 
+            add_tag "${SAFE_BRANCH}"
             add_tag "${SAFE_BRANCH}-latest"
             add_tag "${SAFE_BRANCH}-${TIMESTAMP}"
           fi
@@ -230,3 +231,4 @@ jobs:
                 ;;
             esac
           } >> "$GITHUB_STEP_SUMMARY"
+          
