@@ -121,3 +121,5 @@ jobs:
           cache-to: ${{ inputs.cache_to }}
           tags: ${{ inputs.tags }}
           target: ${{ inputs.target }}
+          sbom: true
+          provenance: mode=max
