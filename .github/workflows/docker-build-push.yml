@@ -20,10 +20,6 @@ name: Reusable Docker Build And Push
       tags:
         required: true
         type: string
-      push:
-        required: false
-        type: boolean
-        default: true
       cache_from:
         required: false
         type: string
@@ -109,14 +105,14 @@ jobs:
 
       # Real build and push. This can still be multi-platform.
       # It runs only after the optional test passes.
-      - name: Build and push image
+      - name: Build and Push
         uses: docker/build-push-action@v7
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
           build-args: ${{ inputs.build_args }}
-          push: ${{ inputs.push }}
+          push: true
           cache-from: ${{ inputs.cache_from }}
           cache-to: ${{ inputs.cache_to }}
           tags: ${{ inputs.tags }}
